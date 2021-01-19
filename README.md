@@ -42,9 +42,5 @@ you should modify it to suit your location and OS syntax
 
 ## Usage:
 
-```bash
-$ aadd "gcm" "git commit -m"
-added new alias gcm='git commit -m'
-$ arf
-$ gcm "Initial commit"
-```
+https://asciinema.org/a/R73YpiXi77JbcdbrRqrQrocPE
+[![asciicast](https://asciinema.org/a/R73YpiXi77JbcdbrRqrQrocPE.svg)](https://asciinema.org/a/R73YpiXi77JbcdbrRqrQrocPE)
