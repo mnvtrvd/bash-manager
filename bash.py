@@ -25,19 +25,16 @@ def refresh():
 
 # saves a backup of your current bash profile to this directory (just in case)
 def backup():
-    l = sorted(os.listdir(HOME))
     if os.path.exists(PATH):
         copyfile(PATH, BASH_PROFILE)
+        print("successfully backed up bash profile")
     else:
         print("ERROR: a bash profile with provided name '" + BASH_PROFILE + "' does not exist")
-        print(l)
 
 # reverts bash profile to saved version from earlier
-def revert(hard=False):
-    if hard:
-        copyfile("double_backup/" + BASH_PROFILE, PATH)
-    else:
-        copyfile(BASH_PROFILE, PATH)
+def revert():
+    copyfile(BASH_PROFILE, PATH)
+    print("successfully reverted back to earlier bash profile")
 
 # checks if a provided alias already exists and returns corresponding action
 def alias_exists(alias):
@@ -46,7 +43,7 @@ def alias_exists(alias):
 
     for line in bash:
         if alias_name in line:
-            action = line[len(alias_name)+1:-1]
+            action = line.strip("\n")[len(alias_name)+1:-1]
             # print("found " + line)
             bash.close()
             return action
@@ -76,10 +73,11 @@ def list_alias():
 
 # removes a provided alias from bash profile
 def rm_alias(alias):
+    print(alias)
     exists = alias_exists(alias)
 
     if exists == "":
-        print("alias " + alias + " does not exists!")
+        print("alias " + alias + " does not exist!")
     else:
         f = open(PATH, "r")
         lines = f.readlines()
@@ -99,6 +97,7 @@ def rm_alias(alias):
 
 # adds a provided alias to bash profile
 def add_alias(alias, action):
+    print(alias)
     exists = alias_exists(alias).strip("'")
 
     if exists == action:
@@ -130,7 +129,47 @@ def add_alias(alias, action):
     f.close()
     print("added new " + new_alias)
 
-
-
 if not os.path.exists(BASH_PROFILE):
+    print("no backup detected, taking one now just in case")
     backup()
+
+parser = argparse.ArgumentParser(description='Modifies your existing bash profile and allows for quick alias management.')
+parser.add_argument('--backup', nargs='?', type=bool, const=True, default=False, help='this creates a backup of your current bash profile just in case something goes wrong later.')
+parser.add_argument('--revert', nargs='?', type=bool, const=True, default=False, help='this reverts your bash profile back to a previously working state.')
+parser.add_argument('--list', nargs='?', type=bool, const=True, default=False, help='this will list all of the aliases in your bash profile.')
+parser.add_argument('--add', nargs=2, type=str, default=["",""], help='this will add given alias and action to your bash profile.')
+parser.add_argument('--rm', type=str, default="", help='this will remove the given alias from your bash profile.')
+parser.add_argument('--whatami', type=str, default="", help='this will define a provided alias.')
+args = parser.parse_args()
+
+BACKUP = args.backup
+REVERT = args.revert
+LIST = args.list
+ADD_ALIAS = args.add[0]
+ADD_ACTION = args.add[1]
+RM = args.rm
+WHATAMI = args.whatami
+
+count = 0
+
+if BACKUP: count += 1
+if REVERT: count += 1
+if LIST: count += 1
+if ADD_ALIAS != "" or ADD_ACTION != "": count += 1
+if RM != "": count += 1
+if WHATAMI != "": count += 1
+
+if count != 1: print("ERROR: please execute exactly one command at a time")
+elif BACKUP: backup()
+elif REVERT: revert()
+elif LIST: list_alias()
+elif ADD_ALIAS != "" or ADD_ACTION != "": add_alias(ADD_ALIAS, ADD_ACTION)
+elif RM != "": rm_alias(RM)
+elif WHATAMI != "":
+    action = alias_exists(WHATAMI)
+    if action == "":
+        print("ERROR: provided alias does not exist")
+    else:
+        print(action)
+
+refresh()
