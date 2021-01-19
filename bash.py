@@ -96,7 +96,6 @@ def list_alias():
 
 # removes a provided alias from bash profile
 def rm_alias(alias):
-    print(alias)
     exists = alias_exists(alias)
 
     if exists == "":
@@ -120,7 +119,6 @@ def rm_alias(alias):
 
 # adds a provided alias to bash profile
 def add_alias(alias, action):
-    print(alias)
     exists = alias_exists(alias).strip("'")
 
     if exists == action:
@@ -159,7 +157,8 @@ if not os.path.exists(BACKUP_PATH):
     print("no backup detected, taking one now just in case")
     backup()
 
-parser = argparse.ArgumentParser(description='Modifies your existing bash profile and allows for quick alias management.')
+parser = argparse.ArgumentParser(description='bash-manager: modifies your existing bash profile and allows for quick alias management.')
+parser.add_argument('--default', nargs='?', type=bool, const=True, default=False, help='this adds default bash-manager commands to your profile.')
 parser.add_argument('--open', nargs='?', type=int, const=1, default=0, help='this opens your bash profile in vim.')
 parser.add_argument('--backup', nargs='?', type=bool, const=True, default=False, help='this creates a backup of your current bash profile just in case something goes wrong later.')
 parser.add_argument('--revert', nargs='?', type=bool, const=True, default=False, help='this reverts your bash profile back to a previously working state.')
@@ -170,6 +169,7 @@ parser.add_argument('--rm', type=str, default="", help='this will remove the giv
 parser.add_argument('--whatami', type=str, default="", help='this will define a provided alias.')
 args = parser.parse_args()
 
+DEFAULT = args.default
 OPEN = args.open
 BACKUP = args.backup
 REVERT = args.revert
@@ -182,6 +182,7 @@ WHATAMI = args.whatami
 
 count = 0
 
+if DEFAULT: count += 1
 if OPEN > 0: count += 1
 if BACKUP: count += 1
 if REVERT: count += 1
@@ -195,6 +196,17 @@ if count == 0:
     print("you need to provide at least 1 command to work (use -h or --help for assistance)")
 elif count > 1:
     print("ERROR: please execute exactly one command at a time")
+elif DEFAULT:
+    add_alias('ahelp', 'python3 ~/bash-manager/bash.py --help') # opens bash manager helper
+    add_alias('aopen', 'python3 ~/bash-manager/bash.py --open') # open bash profile
+    add_alias('abu', 'python3 ~/bash-manager/bash.py --backup') # backup bash profile
+    add_alias('arv', 'python3 ~/bash-manager/bash.py --revert') # revert to old bash profile
+    add_alias('arf', 'python3 ~/bash-manager/bash.py --refresh') # refresh bash profile (allows you to use new aliases)
+    add_alias('als', 'python3 ~/bash-manager/bash.py --list') # lists aliases in bash profile
+    add_alias('aadd', 'python3 ~/bash-manager/bash.py --add') # adds new alias to bash profile
+    add_alias('arm', 'python3 ~/bash-manager/bash.py --rm') # removes provided alias from bash profile
+    add_alias('adef', 'python3 ~/bash-manager/bash.py --whatami') # defines alias in bash profile
+    refresh()
 elif OPEN > 0:
     if OPEN == 1:
         open_bash()
