@@ -6,6 +6,7 @@ from shutil import copyfile
 
 # i use zsh, hence the name. you may have another profile name, so change here:
 BASH_PROFILE = ".zsh_aliases"
+
 HOME = str(Path.home())
 PATH = HOME + "/" + BASH_PROFILE
 BACKUP_PATH = HOME + "/bash-manager/" + BASH_PROFILE
