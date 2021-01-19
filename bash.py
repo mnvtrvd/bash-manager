@@ -10,6 +10,7 @@ BASH_PROFILE = ".zsh_aliases"
 HOME = str(Path.home())
 PATH = HOME + "/" + BASH_PROFILE
 BACKUP_PATH = HOME + "/bash-manager/" + BASH_PROFILE
+ACTIVE = BACKUP_PATH + "_active"
 
 # opens bash file in vim or vscode (defaults to vim)
 def open_bash(code=False):
@@ -22,8 +23,10 @@ def open_bash(code=False):
 
 # refreshes the bash profile ensuring user can use newly aliased commands
 def refresh():
-    command = ". " + PATH
-    subprocess.call(command, shell=True)
+    if os.path.exists(PATH):
+        command = ". " + PATH
+        subprocess.call(command, shell=True)
+        copyfile(PATH, ACTIVE)
 
 # saves a backup of your current bash profile to this directory (just in case)
 def backup():
@@ -32,16 +35,22 @@ def backup():
         print("successfully backed up bash profile")
     else:
         print("ERROR: a bash profile with provided name '" + BASH_PROFILE + "' does not exist")
+    
+    refresh()
 
 # reverts bash profile to saved version from earlier
 def revert():
     copyfile(BACKUP_PATH, PATH)
     print("successfully reverted back to earlier bash profile")
+    refresh()
 
 # checks if a provided alias already exists and returns corresponding action
 def alias_exists(alias):
     bash = open(PATH, "r")
-    alias_name = "alias " + alias + "="
+    if alias[-1] == "*":
+        alias_name = "alias " + alias[:-1] + "="
+    else:
+        alias_name = "alias " + alias + "="
 
     for line in bash:
         if alias_name in line:
@@ -54,23 +63,35 @@ def alias_exists(alias):
     return ""
 
 # prints an alphabetical list of all the active aliases
+# currently inactive aliases will be marked with a "*"
 def list_alias():
     f = open(PATH, "r")
-    starter = "alias "
     aliases = []
 
     for line in f:
-        if starter in line:
-            action = ""
-            index = 6
-            while line[index] != "=":
-                action = action + line[index]
-                index+=1
-            
-            aliases.append(action)
+        words = line.partition("alias ")
+        if words[2] != "":
+            alias = words[2].partition("=")[0]
+            aliases.append(alias + "*")
 
     f.close()
-    
+
+    if os.path.exists(ACTIVE):
+        f = open(ACTIVE, "r")
+        active = []
+
+        for line in f:
+            words = line.partition("alias ")
+            if words[2] != "":
+                alias = words[2].partition("=")[0]
+                active.append(alias + "*")
+
+        f.close()
+
+        for i in range(len(aliases)):
+            if aliases[i] in active:
+                aliases[i] = aliases[i][:-1]
+
     print(sorted(aliases))
 
 # removes a provided alias from bash profile
@@ -131,6 +152,9 @@ def add_alias(alias, action):
     f.close()
     print("added new " + new_alias)
 
+################################################################################
+
+# if you don't have any backups currently, we will grab one
 if not os.path.exists(BACKUP_PATH):
     print("no backup detected, taking one now just in case")
     backup()
@@ -180,7 +204,6 @@ elif BACKUP:
     backup()
 elif REVERT:
     revert()
-    refresh()
 elif REFRESH:
     refresh()
 elif LIST:
