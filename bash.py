@@ -1,15 +1,18 @@
 import argparse
+import json
 import os
 import subprocess
 from pathlib import Path
 from shutil import copyfile
 
 # i use zsh, hence the name. you may have another profile name, so change here:
-BASH_PROFILE = ".zsh_aliases"
+with open("config.json", "r") as config:
+    json_config = json.load(config)
 
+BASH_PROFILE = json_config['BASH_PROFILE']
 HOME = str(Path.home())
-PATH = HOME + "/" + BASH_PROFILE
-BACKUP_PATH = HOME + "/bash-manager/" + BASH_PROFILE
+PATH = HOME + "/" + json_config['BASH_PROFILE']
+BACKUP_PATH = HOME + "/bash-manager/" + json_config['BASH_PROFILE']
 ACTIVE = BACKUP_PATH + "_active"
 
 # opens bash file in vim or vscode (defaults to vim)
