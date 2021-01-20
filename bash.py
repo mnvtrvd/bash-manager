@@ -11,8 +11,8 @@ with open("config.json", "r") as config:
 
 BASH_PROFILE = json_config['BASH_PROFILE']
 HOME = str(Path.home())
-PATH = HOME + "/" + json_config['BASH_PROFILE']
-BACKUP_PATH = HOME + "/bash-manager/" + json_config['BASH_PROFILE']
+PATH = HOME + "/" + BASH_PROFILE
+BACKUP_PATH = HOME + "/bash-manager/" + BASH_PROFILE
 ACTIVE = BACKUP_PATH + "_active"
 
 # opens bash file in vim or vscode (defaults to vim)
