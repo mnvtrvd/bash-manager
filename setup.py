@@ -9,6 +9,9 @@ def setup():
     with open("config.json", "w+") as config:
         json.dump(settings, config)
     shutil.move(os.getcwd(), str(Path.home()))
-
+    print("\nbash-manager has been moved to ~/bash-manager\n")
+    print("""to enable default behavior, please execute: 
+                $ python3 ~/bash-manager/bash.py --default\n""")
 if __name__ == "__main__":
     setup()
+    os.chdir(str(Path.home()) + "/bash-manager")
