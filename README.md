@@ -13,14 +13,10 @@ All of the libraries are native so you won't have to install any new modules
 
 There isn't much to do in order to get this up and running.
 
-First, place this directory in your `HOME` directory.
+Simply run `python setup.py` and enter the name of your bash profile.
+(Special thanks to Joe Michelini for helping create the setup.py)
 
-Second, make sure the following line of code in bash.py (line 8) matches the
-name of your bash profile:
-`BASH_PROFILE = ".zsh_aliases"`.
-If not, replace this with the name of your bash profile.
-
-Lastly, I recommend adding some (or all) of these aliases to you bash
+Also, I recommend adding some (or all) of these aliases to you bash
 profile to make it easier to edit your bash profile from anywhere.
 
 Run to automatically add them all:
@@ -37,8 +33,6 @@ $ alias aadd='python3 ~/bash-manager/bash.py --add' # adds new alias to bash pro
 $ alias arm='python3 ~/bash-manager/bash.py --rm' # removes provided alias from bash profile
 $ alias adef='python3 ~/bash-manager/bash.py --whatami' # defines alias in bash profile
 ```
-Note: I placed this folder in my home directory hence the `"~/bash-manager/"`,
-you should modify it to suit your location and OS syntax
 
 ## Usage:
 
