@@ -14,4 +14,3 @@ def setup():
                 $ python3 ~/bash-manager/bash.py --default\n""")
 if __name__ == "__main__":
     setup()
-    os.chdir(str(Path.home()) + "/bash-manager")
