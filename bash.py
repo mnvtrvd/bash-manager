@@ -5,12 +5,17 @@ import subprocess
 from pathlib import Path
 from shutil import copyfile
 
-# i use zsh, hence the name. you may have another profile name, so change here:
-with open("config.json", "r") as config:
-    json_config = json.load(config)
-
-BASH_PROFILE = json_config['BASH_PROFILE']
 HOME = str(Path.home())
+JSON = HOME + "/bash-manager/config.json"
+
+if os.path.exists(JSON):
+    with open(JSON, "r") as config:
+        json_config = json.load(config)
+
+    BASH_PROFILE = json_config['BASH_PROFILE']
+else:
+    print("ERROR: it seems you haven't run setup.py")
+
 PATH = HOME + "/" + BASH_PROFILE
 BACKUP_PATH = HOME + "/bash-manager/" + BASH_PROFILE
 ACTIVE = BACKUP_PATH + "_active"
